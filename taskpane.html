@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DART Media Library Test</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="brand">DART</div>
+      <div>
+        <h1>Media Library</h1>
+        <p>Word task-pane proof of concept</p>
+      </div>
+    </header>
+
+    <section class="status" aria-live="polite">
+      <span class="dot"></span>
+      <div><strong id="status-title">Loading Office...</strong><br><span id="status-detail">Checking the Word host.</span></div>
+    </section>
+
+    <section class="card">
+      <h2>Test the connection</h2>
+      <p>This test does not contact Bynder. It confirms that the custom add-in can run and write to the current Word document.</p>
+      <button id="insert-button" type="button" disabled>Insert test message</button>
+      <p id="result" class="result" aria-live="polite"></p>
+    </section>
+
+    <section class="next">
+      <h2>Next milestone</h2>
+      <ol>
+        <li>Register the read-only Bynder OAuth app.</li>
+        <li>Add sign-in and asset search.</li>
+        <li>Insert a selected Bynder image into Word.</li>
+      </ol>
+    </section>
+  </main>
+  <script src="taskpane.js"></script>
+</body>
+</html>
