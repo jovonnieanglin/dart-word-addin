@@ -3,40 +3,40 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DART Media Library Test</title>
+  <title>DART Media Library</title>
   <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles-polished.css">
 </head>
 <body>
-  <main class="shell">
-    <header>
-      <div class="brand">DART</div>
-      <div>
-        <h1>Media Library</h1>
-        <p>Word task-pane proof of concept</p>
-      </div>
+  <main class="app-shell">
+    <header class="app-header">
+      <div class="brand-mark">DART</div>
+      <div class="brand-copy"><h1>Media Library</h1><p>Approved assets from Bynder</p></div>
+      <span id="connection-pill" class="pill pending"><span class="dot"></span><span id="connection-text">Checking</span></span>
     </header>
 
-    <section class="status" aria-live="polite">
-      <span class="dot"></span>
-      <div><strong id="status-title">Loading Office...</strong><br><span id="status-detail">Checking the Word host.</span></div>
+    <section id="signed-out" class="panel auth-panel" hidden>
+      <h2>Connect to Bynder</h2>
+      <p>Sign in with your DART Bynder account to search and insert approved assets.</p>
+      <button id="bynder-login" class="primary" type="button">Sign in to Bynder</button>
     </section>
 
-    <section class="card">
-      <h2>Test the connection</h2>
-      <p>This test does not contact Bynder. It confirms that the custom add-in can run and write to the current Word document.</p>
-      <button id="insert-button" type="button" disabled>Insert test message</button>
-      <p id="result" class="result" aria-live="polite"></p>
+    <section id="library" hidden>
+      <form id="search-form" class="search-wrap">
+        <label for="search-input">Search the DART Media Library</label>
+        <div class="search-row">
+          <input id="search-input" type="search" maxlength="100" placeholder="Search assets" autocomplete="off">
+          <button class="primary search-button" type="submit">Search</button>
+        </div>
+      </form>
+
+      <div class="results-topline">
+        <span id="results-label">Search Bynder to find assets</span>
+      </div>
+      <div id="results" class="results" aria-live="polite"></div>
     </section>
 
-    <section class="next">
-      <h2>Next milestone</h2>
-      <ol>
-        <li>Register the read-only Bynder OAuth app.</li>
-        <li>Add sign-in and asset search.</li>
-        <li>Insert a selected Bynder image into Word.</li>
-      </ol>
-    </section>
+    <div id="toast" class="toast" aria-live="polite" hidden></div>
   </main>
   <script src="taskpane.js"></script>
 </body>
