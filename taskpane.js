@@ -1,44 +1,14 @@
 (() => {
-  const API = "https://func-dart-bynder-office-dev-czfwd3e7arbfeze8.eastus-01.azurewebsites.net/api/bynder";
-  const pill = document.getElementById("connection-pill");
-  const connectionText = document.getElementById("connection-text");
-  const signedOut = document.getElementById("signed-out");
-  const library = document.getElementById("library");
-  const login = document.getElementById("bynder-login");
-  const form = document.getElementById("search-form");
-  const input = document.getElementById("search-input");
-  const results = document.getElementById("results");
-  const resultsLabel = document.getElementById("results-label");
-  const toast = document.getElementById("toast");
-
-  const showToast = (message, isError=false) => {
-    toast.textContent = message; toast.className = isError ? "toast error" : "toast"; toast.hidden = false;
-    clearTimeout(showToast.timer); showToast.timer = setTimeout(() => toast.hidden = true, 3500);
-  };
-  const api = async path => {
-    const r = await fetch(API + path, { credentials: "include" });
-    if (r.status === 401) throw new Error("not_authenticated");
-    if (!r.ok) throw new Error(`Request failed (${r.status})`);
-    return r.json();
-  };
-  const setConnection = connected => {
-    pill.className = connected ? "pill connected" : "pill";
-    connectionText.textContent = connected ? "Connected" : "Not connected";
-    signedOut.hidden = connected; library.hidden = !connected;
-  };
-  async function refreshStatus() {
-    try { const s = await api("/status"); setConnection(s.authenticated); }
-    catch { pill.className="pill error"; connectionText.textContent="Unavailable"; signedOut.hidden=false; }
-  }
-  login.addEventListener("click", () => window.open(API + "/login", "bynderAuth", "width=720,height=760"));
-  window.addEventListener("message", e => { if (e.origin === new URL(API).origin && e.data?.type === "BYNDER_AUTH_COMPLETE") refreshStatus(); });
-  form.addEventListener("submit", async e => {
-    e.preventDefault(); const q=input.value.trim(); if(!q){input.focus();return;}
-    results.innerHTML='<div class="empty">Searching Bynder…</div>'; resultsLabel.textContent="Searching…";
-    try { const data=await api("/assets?keyword="+encodeURIComponent(q)); render(data.assets||[]); }
-    catch(err){ if(err.message==="not_authenticated"){setConnection(false);showToast("Your Bynder session expired. Sign in again.",true);} else {results.innerHTML='<div class="empty">Search could not be completed.</div>';showToast(err.message,true);} }
-  });
-  function render(assets){ results.innerHTML=""; resultsLabel.textContent = `${assets.length} asset${assets.length===1?"":"s"} found`; if(!assets.length){results.innerHTML='<div class="empty">No matching assets found.</div>';return;} assets.forEach(a=>{const card=document.createElement("article");card.className="asset";const thumb=document.createElement("div");thumb.className="thumb";if(a.thumbnailUrl){const img=document.createElement("img");img.src=a.thumbnailUrl;img.alt="";thumb.appendChild(img);}const body=document.createElement("div");body.className="asset-body";const name=document.createElement("div");name.className="asset-name";name.textContent=a.name;const button=document.createElement("button");button.type="button";button.className="insert";button.textContent="Insert into Word";button.addEventListener("click",()=>insertImage(a.id,button));body.append(name,button);card.append(thumb,body);results.appendChild(card);}); }
-  async function insertImage(assetId, button){button.disabled=true;button.textContent="Inserting…";try{const r=await fetch(`${API}/assets/${encodeURIComponent(assetId)}/content`,{credentials:"include"});if(r.status===401)throw new Error("Your session expired. Sign in again.");if(!r.ok)throw new Error(`Image download failed (${r.status}).`);const blob=await r.blob();if(!blob.type.startsWith("image/"))throw new Error("The selected asset is not an image.");const base64=await new Promise((ok,no)=>{const f=new FileReader();f.onload=()=>ok(String(f.result).split(",")[1]);f.onerror=no;f.readAsDataURL(blob);});await Word.run(async c=>{c.document.getSelection().insertInlinePictureFromBase64(base64,Word.InsertLocation.replace);await c.sync();});showToast("Asset inserted into Word.");}catch(error){showToast(error.message||"Unable to insert this asset.",true);}finally{button.disabled=false;button.textContent="Insert into Word";}}
-  Office.onReady(info => { if(info.host!==Office.HostType.Word){pill.className="pill error";connectionText.textContent="Open in Word";return;} refreshStatus(); });
+  const API="https://func-dart-bynder-office-dev-czfwd3e7arbfeze8.eastus-01.azurewebsites.net/api/bynder";
+  const pill=document.getElementById("connection-pill"),connectionText=document.getElementById("connection-text"),signedOut=document.getElementById("signed-out"),library=document.getElementById("library"),login=document.getElementById("bynder-login"),form=document.getElementById("search-form"),input=document.getElementById("search-input"),results=document.getElementById("results"),resultsLabel=document.getElementById("results-label"),toast=document.getElementById("toast");
+  const showToast=(message,isError=false)=>{toast.textContent=message;toast.className=isError?"toast error":"toast";toast.hidden=false;clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>toast.hidden=true,3000)};
+  const api=async path=>{const r=await fetch(API+path,{credentials:"include"});if(r.status===401)throw new Error("not_authenticated");if(!r.ok)throw new Error(`Request failed (${r.status})`);return r.json()};
+  const setConnection=connected=>{pill.className=connected?"pill connected":"pill";connectionText.textContent=connected?"Connected":"Not connected";signedOut.hidden=connected;library.hidden=!connected};
+  async function refreshStatus(){try{const s=await api("/status");setConnection(s.authenticated)}catch{pill.className="pill error";connectionText.textContent="Unavailable";signedOut.hidden=false}}
+  login.addEventListener("click",()=>window.open(API+"/login","bynderAuth","width=720,height=760"));
+  window.addEventListener("message",e=>{if(e.origin===new URL(API).origin&&e.data?.type==="BYNDER_AUTH_COMPLETE")refreshStatus()});
+  form.addEventListener("submit",async e=>{e.preventDefault();const q=input.value.trim();if(!q){input.focus();return}results.innerHTML='<div class="empty">Searching Bynder…</div>';resultsLabel.textContent="Searching…";try{const data=await api("/assets?keyword="+encodeURIComponent(q));render(data.assets||[])}catch(err){if(err.message==="not_authenticated"){setConnection(false);showToast("Your Bynder session expired. Sign in again.",true)}else{results.innerHTML='<div class="empty">Search could not be completed.</div>';showToast(err.message,true)}}});
+  function render(assets){results.innerHTML="";resultsLabel.textContent=`${assets.length} asset${assets.length===1?"":"s"} found`;if(!assets.length){results.innerHTML='<div class="empty"><strong>No matching assets.</strong><br>Try a filename, keyword or campaign.</div>';return}assets.forEach(a=>{const card=document.createElement("article");card.className="asset";const thumb=document.createElement("div");thumb.className="thumb";if(a.thumbnailUrl){const img=document.createElement("img");img.src=a.thumbnailUrl;img.alt="";thumb.appendChild(img)}const body=document.createElement("div");body.className="asset-body";const name=document.createElement("div");name.className="asset-name";name.textContent=a.name;const type=document.createElement("div");type.className="asset-type";type.textContent=a.type||"Asset";const button=document.createElement("button");button.type="button";button.className="insert";button.textContent="Insert";button.addEventListener("click",()=>insertImage(a.id,button));body.append(name,type,button);card.append(thumb,body);results.appendChild(card)})}
+  async function insertImage(assetId,button){button.disabled=true;button.textContent="Inserting…";try{const r=await fetch(`${API}/assets/${encodeURIComponent(assetId)}/content`,{credentials:"include"});if(r.status===401)throw new Error("Your session expired. Sign in again.");if(!r.ok)throw new Error(`Image download failed (${r.status}).`);const blob=await r.blob();if(!blob.type.startsWith("image/"))throw new Error("The selected asset is not an image.");const base64=await new Promise((ok,no)=>{const f=new FileReader();f.onload=()=>ok(String(f.result).split(",")[1]);f.onerror=no;f.readAsDataURL(blob)});await Word.run(async c=>{c.document.getSelection().insertInlinePictureFromBase64(base64,Word.InsertLocation.replace);await c.sync()});showToast("Asset inserted into Word.")}catch(error){showToast(error.message||"Unable to insert this asset.",true)}finally{button.disabled=false;button.textContent="Insert"}}
+  Office.onReady(info=>{if(info.host!==Office.HostType.Word){pill.className="pill error";connectionText.textContent="Open in Word";return}refreshStatus()});
 })();
