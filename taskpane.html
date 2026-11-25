@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>DART Media Library</title>
   <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-  <link rel="stylesheet" href="styles-polished.css">
+  <link rel="stylesheet" href="styles-final.css">
 </head>
 <body>
   <main class="app-shell">
@@ -23,19 +23,16 @@
 
     <section id="library" hidden>
       <form id="search-form" class="search-wrap">
-        <label for="search-input">Search the DART Media Library</label>
-        <div class="search-row">
-          <input id="search-input" type="search" maxlength="100" placeholder="Search assets" autocomplete="off">
-          <button class="primary search-button" type="submit">Search</button>
+        <label for="search-input">Find an approved asset</label>
+        <div class="search-control">
+          <input id="search-input" type="search" maxlength="100" placeholder="Filename, keyword or campaign" autocomplete="off">
+          <button class="search-icon" type="submit" aria-label="Search">⌕</button>
         </div>
       </form>
 
-      <div class="results-topline">
-        <span id="results-label">Search Bynder to find assets</span>
-      </div>
+      <div class="results-topline"><span id="results-label">Search Bynder to find assets</span></div>
       <div id="results" class="results" aria-live="polite"></div>
     </section>
-
     <div id="toast" class="toast" aria-live="polite" hidden></div>
   </main>
   <script src="taskpane.js"></script>
